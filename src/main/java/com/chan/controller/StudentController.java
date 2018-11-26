@@ -1,9 +1,12 @@
 package com.chan.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.chan.service.ProducerService;
 import com.chan.service.StudentService;
 import com.chan.util.BaseService;
 import com.chan.util.RedisService;
 import com.chan.util.ResultBean;
+import com.chan.util.rabbitConfig.ConsumerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -11,8 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.ws.rs.QueryParam;
 import java.util.*;
 
 @Controller
@@ -25,6 +26,20 @@ public class StudentController extends BaseService {
     @Autowired
     @Qualifier("redisService")
     private RedisService redisService;
+
+    @Autowired
+    @Qualifier("producerService")
+    private ProducerService producerService;
+
+    @ResponseBody
+    @RequestMapping("/demo1")
+    public String demo1() {
+        JSONObject json = new JSONObject(3);
+        json.put("key1","value1");
+        json.put("key2","value2");
+        producerService.sendMsg(ConsumerConfig.QUEUE_NAME,json);
+        return "11";
+    }
 
     @RequestMapping("/index")
     public String index(Model model) {
