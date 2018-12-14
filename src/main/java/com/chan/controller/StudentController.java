@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 @Slf4j
 @Controller
@@ -49,7 +50,7 @@ public class StudentController extends BaseService {
 
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResultBean login(String username, String password) {
+    public ResultBean login(@RequestParam("name") String username, @RequestParam("password") String password) {
         System.out.println(username + "\t" + password);
         Map<String, Object> param = new HashMap<>(3);
         param.put("name", username);
@@ -78,6 +79,35 @@ public class StudentController extends BaseService {
 
 //        studentService.insertInfo(param);
         return null;
+    }
+
+    @ResponseBody
+    @RequestMapping("/threadTest")
+    public void threadTest(@RequestParam("name") String username, @RequestParam("password") String password){
+        int count = 100;
+        //利用发令枪操作
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+        for (int i = 0; i < count; i++) {
+            int finalI = i;
+            new Thread() {
+                public void run() {
+                    System.err.println(String.format("name:%s---%s---%s", Thread.currentThread().getName(), System.currentTimeMillis(), finalI));
+                    Map<String, Object> param = new HashMap<>(3);
+                    param.put("name", username);
+                    param.put("password", password);
+                    String key = "USER_" + username;
+                    studentService.login(param);
+//                    redisUtil.set(key, studentService.login(param), 1000L);
+                }
+            }.start();
+            countDownLatch.countDown();
+        }
+        try {
+            //使线程在锁存器倒计数至零之前一直等待
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -3,6 +3,9 @@ jQuery(document).ready(function () {
     $('.page-container form').submit(function () {
         var username = $(this).find('.username').val();
         var password = $(this).find('.password').val();
+
+        // var username = $('#username').val();
+        // var password = $('#password').val();
         if (username == '') {
             $(this).find('.error').fadeOut('fast', function () {
                 $(this).css('top', '27px');
@@ -21,16 +24,18 @@ jQuery(document).ready(function () {
             return false;
         } else {
             // alert(username + "--" + password);
+
             $.ajax({
                 type: "POST",
-                url: "http://localhost:8080/login",
+                // url: "http://localhost:8084/login",
+                url: "http://localhost:8084/threadTest",
                 dataType: "json",
                 data: {
                     name: username,
                     password: password
                 },
                 success: function (data) {
-                    alert(data.toString());
+                    // alert(data.toString());
                     if (0 == data.msgCode) {
                         //窗体重新加载
                     }
