@@ -2,17 +2,21 @@ package com.chan.controller;
 
 import com.chan.service.StudentService;
 import com.chan.util.BaseService;
-import com.chan.util.RedisService;
 import com.chan.util.ResultBean;
+import com.chan.util.redis.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import java.util.*;
 
+@Slf4j
 @Controller
 public class StudentController extends BaseService {
 
@@ -20,9 +24,15 @@ public class StudentController extends BaseService {
     @Qualifier("studentService")
     private StudentService studentService;
 
+//    @Autowired
+//    @Qualifier("redisService")
+//    private RedisService redisService;
+
     @Autowired
-    @Qualifier("redisService")
-    private RedisService redisService;
+    @Qualifier("redisUtil")
+    RedisUtil redisUtil;
+
+//    private JedisUtil jedisUtil;
 
     @RequestMapping("/index")
     public String index(Model model) {
@@ -38,16 +48,16 @@ public class StudentController extends BaseService {
     }
 
     @ResponseBody
-    @RequestMapping("/login")
-    public ResultBean login(@RequestParam("name") String name, @RequestParam("password") String password) {
-        System.out.println(name + "\t" + password);
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResultBean login(String username, String password) {
+        System.out.println(username + "\t" + password);
         Map<String, Object> param = new HashMap<>(3);
-        param.put("name", name);
-        param.put("name", password);
-        String key = "USER_" + name;
-        redisService.set(key, studentService.login(param), 1000L);
-        System.out.println("key:" + key + "\n" + redisService.get(key));
-        return super.successSingleResult(redisService.get(key));
+        param.put("name", username);
+        param.put("password", password);
+        String key = "USER_" + username;
+        redisUtil.set(key, studentService.login(param), 1000L);
+        String res = redisUtil.get(key).toString();
+        return super.successSingleResult(res);
     }
 
     @ResponseBody
