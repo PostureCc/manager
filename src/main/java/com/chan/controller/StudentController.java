@@ -3,6 +3,7 @@ package com.chan.controller;
 import com.chan.service.StudentService;
 import com.chan.util.BaseService;
 import com.chan.util.ResultBean;
+import com.chan.util.id.SnowflakeIdWorker;
 import com.chan.util.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,7 @@ public class StudentController extends BaseService {
 
     @ResponseBody
     @RequestMapping("/threadTest")
-    public void threadTest(@RequestParam("name") String username, @RequestParam("password") String password){
+    public void threadTest(@RequestParam("name") String username, @RequestParam("password") String password) {
         int count = 100;
         //利用发令枪操作
         CountDownLatch countDownLatch = new CountDownLatch(count);
@@ -91,13 +92,18 @@ public class StudentController extends BaseService {
             int finalI = i;
             new Thread() {
                 public void run() {
-                    System.err.println(String.format("name:%s---%s---%s", Thread.currentThread().getName(), System.currentTimeMillis(), finalI));
+                    String id = String.valueOf(SnowflakeIdWorker.snowflackIdWorkers.get().nextId());
                     Map<String, Object> param = new HashMap<>(3);
-                    param.put("name", username);
+                    param.put("name", username + id);
                     param.put("password", password);
-                    String key = "USER_" + username;
-                    studentService.login(param);
-//                    redisUtil.set(key, studentService.login(param), 1000L);
+                    param.put("age", 0);
+                    param.put("gender", "男");
+                    //字符串太长 检查截取
+                    int length = id.length();
+                    param.put("telephone", id.substring(length - 7, length));
+                    param.put("email", id + "@163.com");
+                    param.put("classid", "1");
+                    studentService.insertInfo(param);
                 }
             }.start();
             countDownLatch.countDown();
@@ -107,6 +113,27 @@ public class StudentController extends BaseService {
             countDownLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] agrs) {
+//        for (int i = 0; i < 10; i++) {
+//            String id = String.valueOf(SnowflakeIdWorker.snowflackIdWorkers.get().nextId());
+//            log.info("id:{},length:{},substring:{}", id, id.length(), id.substring(id.length() - 2, id.length()));
+//        }
+
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        String[] mids = new String[list.size()];
+        list.toArray(mids);
+        strDemo(mids);
+    }
+
+    public static void strDemo(String... mids) {
+        for (int i = 0; i < mids.length; i++) {
+            System.out.println(mids[i].toString());
         }
     }
 

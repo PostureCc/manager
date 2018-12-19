@@ -1,6 +1,5 @@
 package com.chan;
 
-import com.alibaba.fastjson.JSON;
 import com.chan.util.SingletonDemo;
 import com.chan.util.redis.RedisConfig;
 import com.chan.util.redis.RedisUtil;
@@ -29,16 +28,6 @@ public class SpringBoot1ApplicationTests {
     @Autowired
     @Qualifier("redisUtil")
     RedisUtil redisUtil;
-
-    class MyThread implements Runnable {
-
-        @Override
-        public void run() {
-            for (int i = 0; i < 10; i++) {
-                System.err.println(Thread.currentThread().getName() + i);
-            }
-        }
-    }
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
