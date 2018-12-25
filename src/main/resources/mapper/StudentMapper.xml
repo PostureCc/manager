@@ -5,8 +5,7 @@
 <mapper namespace="com.chan.dao.StudentDao">
 
     <select id="queryInfo" resultType="Map">
-		  select c.name className,s.* from classes c
-		  inner join student s on c.id = s.classid
+		  select * from student
 	</select>
 
     <select id="login" resultType="Map" parameterType="Map">
@@ -24,5 +23,26 @@
 		insert into student(`name`,`password`,age,gender,telephone,email,classid)
         values(#{name},#{password},#{age},#{gender},#{telephone},#{email},#{classid})
 	</insert>
+
+    <select id="query" resultType="com.chan.model.Student" parameterType="Map">
+        <!--select * from student-->
+        <!--where password = #{password}-->
+        <!--<if test="names != null and names.size() != 0">-->
+            <!--and name in-->
+            <!--<foreach item="item" index="index" collection="names" open="(" separator="," close=")">-->
+                <!--#{item}-->
+            <!--</foreach>-->
+        <!--</if>-->
+
+        select name,count(age) as age from student
+        where password = #{password}
+        <if test="names != null and names.size() != 0">
+            and name in
+            <foreach item="item" index="index" collection="names" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by name
+    </select>
 
 </mapper>

@@ -50,6 +50,19 @@ public class StudentController extends BaseService {
     }
 
     @ResponseBody
+    @RequestMapping("/query")
+    public ResultBean query() {
+        List<Map<String, Object>> list = studentService.queryInfo();
+        list = list.subList(0, 10);
+        List<String> names = new ArrayList<>();
+        list.forEach(item -> names.add(String.valueOf(item.get("name"))));
+        Map<String, Object> params = new HashMap<>(3);
+        params.put("names", names);
+        params.put("password", "111");
+        return super.successSingleResult(studentService.query(params));
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResultBean login(@RequestParam("name") String username, @RequestParam("password") String password) {
         System.out.println(username + "\t" + password);
@@ -122,13 +135,17 @@ public class StudentController extends BaseService {
 //            log.info("id:{},length:{},substring:{}", id, id.length(), id.substring(id.length() - 2, id.length()));
 //        }
 
-        List<String> list = new ArrayList<>();
-        list.add("1");
-        list.add("2");
-        list.add("3");
-        String[] mids = new String[list.size()];
-        list.toArray(mids);
-        strDemo(mids);
+//        List<String> list = new ArrayList<>();
+//        list.add("1");
+//        list.add("2");
+//        list.add("3");
+//        String[] mids = new String[list.size()];
+//        list.toArray(mids);
+//        strDemo(mids);
+
+        Map<String,Object> map = new HashMap<>(3);
+        map.put("is","Y");
+        System.out.println(map.containsKey("is"));
     }
 
     public static void strDemo(String... mids) {

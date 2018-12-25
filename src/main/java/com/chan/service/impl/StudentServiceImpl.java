@@ -1,6 +1,7 @@
 package com.chan.service.impl;
 
 import com.chan.dao.StudentDao;
+import com.chan.model.Student;
 import com.chan.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +16,11 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     @Qualifier("studentDao")
     private StudentDao studentDao;
+
+    @Override
+    public List<Student> query(Map<String, Object> params) {
+        return studentDao.query(params);
+    }
 
     @Override
     public List<Map<String, Object>> queryInfo() {
