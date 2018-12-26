@@ -2,6 +2,10 @@ package com.chan.controller;
 
 import com.chan.service.ProducerService;
 import com.chan.util.rabbitConfig.DirectExchangeConfig;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import com.alibaba.fastjson.JSONObject;
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@Api("RabbitMQ")
 @Controller
 public class RabbitController {
 
@@ -17,6 +22,7 @@ public class RabbitController {
     @Qualifier("producerService")
     private ProducerService producerService;
 
+    @ApiOperation("Test Method1")
     @ResponseBody
     @RequestMapping("/demo1")
     public String demo1() {
@@ -27,6 +33,7 @@ public class RabbitController {
         return "";
     }
 
+    @ApiOperation("Test Method2")
     @ResponseBody
     @RequestMapping("/demo2")
     public String demo2() throws InterruptedException {

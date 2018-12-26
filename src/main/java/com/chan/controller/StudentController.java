@@ -5,6 +5,10 @@ import com.chan.util.BaseService;
 import com.chan.util.ResultBean;
 import com.chan.util.id.SnowflakeIdWorker;
 import com.chan.util.redis.RedisUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
+@Api("Student")
 @Slf4j
 @Controller
 public class StudentController extends BaseService {
@@ -36,17 +41,27 @@ public class StudentController extends BaseService {
 
 //    private JedisUtil jedisUtil;
 
+    @ApiOperation("返回主页")
     @RequestMapping("/index")
     public String index(Model model) {
         int i = 5 / 0;
         return "index";
     }
 
+    @ApiOperation("Test Method2")
     @ResponseBody
     @RequestMapping("/queryInfo")
     public ResultBean queryInfo(Model model) {
         System.err.println("value:" + model.asMap().get("name"));
         return super.successSingleResult(studentService.queryInfo());
+    }
+
+    @ApiOperation("Test Method2")
+    @ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "token", dataType = "String", required = true)})
+    @ResponseBody
+    @RequestMapping("/tokenQuery")
+    public ResultBean tokenQuery() {
+        return super.successSingleResult(null);
     }
 
     @ResponseBody
@@ -143,8 +158,8 @@ public class StudentController extends BaseService {
 //        list.toArray(mids);
 //        strDemo(mids);
 
-        Map<String,Object> map = new HashMap<>(3);
-        map.put("is","Y");
+        Map<String, Object> map = new HashMap<>(3);
+        map.put("is", "Y");
         System.out.println(map.containsKey("is"));
     }
 
